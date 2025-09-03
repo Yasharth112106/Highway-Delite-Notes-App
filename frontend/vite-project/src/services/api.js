@@ -20,3 +20,32 @@ export const login = async (email, password) => {
   return res.json();
 };
 
+// Get Notes
+export const getNotes = async (token) => {
+  const res = await fetch(`${API_URL}/notes`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+};
+
+// Add Note
+export const addNote = async (token, content) => {
+  const res = await fetch(`${API_URL}/notes`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ content }),
+  });
+  return res.json();
+};
+
+// Delete Note
+export const deleteNote = async (token, id) => {
+  const res = await fetch(`${API_URL}/notes/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return res.json();
+};
