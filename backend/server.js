@@ -26,10 +26,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/notesapp")
 
 
 
-//  In-memory OTP store
 const otpStore ={};
 
-//  Email transporter (using Gmail here)
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {

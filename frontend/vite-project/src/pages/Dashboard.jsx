@@ -29,13 +29,11 @@ export default function Dashboard() {
         </button>
       </div>
 
-      {/* User Card */}
       <div className="bg-white p-4 rounded-lg shadow mb-4 text-xl">
         <h3 className="font-semibold">Welcome, {user?.name}!</h3>
         <p className="text-gray-500 text-sm">Email: {user?.email}</p>
       </div>
 
-      {/* Notes Section */}
       <Notes token={token} />
     </div>
   );

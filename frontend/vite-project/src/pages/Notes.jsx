@@ -87,7 +87,7 @@ function Notes({ token }) {
             key={note._id}
             className="flex justify-between items-center border p-2 rounded shadow-sm"
           >
-            <span>{note.text}</span> {/* ✅ fixed from note.content */}
+            <span>{note.text}</span> {/* fixed from note.content */}
             <button
               onClick={() => handleDelete(note._id)}
               className="text-red-500 hover:text-red-700"

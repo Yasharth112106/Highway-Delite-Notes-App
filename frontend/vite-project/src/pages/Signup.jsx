@@ -90,7 +90,7 @@ export default function Signup() {
       const res = await fetch("http://localhost:5000/signup/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, dob, email }), // ✅ send all fields
+        body: JSON.stringify({ name, dob, email }), //  send all fields
       });
       const data = await res.json();
       if (data.success) {
@@ -133,9 +133,7 @@ export default function Signup() {
   return (
   <div className="flex items-center justify-center min-h-screen bg-gray-100">
     <div className="bg-white p-6 rounded-lg shadow-md w-96">
-      {/* Logo + Title */}
       <div className="flex items-center justify-center mb-4">
-        {/* <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mr-2"></div> */}
         <span className="text-lg font-bold">HD</span>
       </div>
 
