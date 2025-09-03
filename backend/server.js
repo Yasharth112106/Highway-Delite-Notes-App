@@ -16,7 +16,15 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const PORT = process.env.PORT || 5000;
 const app = express();
 app.use(express.json());
-app.use(cors());
+import cors from "cors";
+
+app.use(cors({
+  origin: [
+    "http://localhost:5173",                  // for local dev
+    "https://notesapp-frontend-self.vercel.app"        // replace with your Vercel domain
+  ],
+  credentials: true
+}));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -244,4 +252,4 @@ app.delete("/notes/:id",authMiddleware, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log("Server running on http://localhost:5000"));
+app.listen(PORT, () => console.log("Server running on ${PORT}"));
