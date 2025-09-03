@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const { User, Note } = require("./models");
+const authMiddleware = require("./authMiddleware");
 
 const app = express();
 app.use(express.json());
@@ -17,10 +18,10 @@ mongoose.connect("mongodb://127.0.0.1:27017/notesapp")
 // JWT Secret
 const JWT_SECRET = "mysecretkey";
 
-//  AUTH ROUTES (Signup, Login)
+//  AUTH ROUTES 
 
 // Signup (email + password, OTP logic can be added later)
-app.post("/signup", async (req, res) => {
+app.post("/signup", authMiddleware,async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -42,7 +43,7 @@ app.post("/signup", async (req, res) => {
 });
 
 // Login
-app.post("/login", async (req, res) => {
+app.post("/login", authMiddleware,async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -63,7 +64,7 @@ app.post("/login", async (req, res) => {
 // NOTES ROUTES 
 
 // Create Note
-app.post("/notes",  async (req, res) => {
+app.post("/notes", authMiddleware, async (req, res) => {
   try {
     const { content } = req.body;
     if (!content) return res.status(400).json({ message: "Note text required" });
@@ -78,7 +79,7 @@ app.post("/notes",  async (req, res) => {
 });
 
 // Get Notes
-app.get("/notes", async (req, res) => {
+app.get("/notes",authMiddleware, async (req, res) => {
   try {
     const notes = await Note.find({ userId: req.user.userId });
     res.json(notes);
@@ -88,7 +89,7 @@ app.get("/notes", async (req, res) => {
 });
 
 // Delete Note
-app.delete("/notes/:id", async (req, res) => {
+app.delete("/notes/:id",authMiddleware, async (req, res) => {
   try {
     await Note.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
     res.json({ message: "Note deleted" });
