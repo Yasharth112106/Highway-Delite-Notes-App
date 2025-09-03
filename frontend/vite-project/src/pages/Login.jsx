@@ -57,6 +57,9 @@ export default function Login() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
 
+  const API = import.meta.env.VITE_API_URL;
+
+
   useEffect(() => {
     /* global google */
    google.accounts.id.initialize({
@@ -72,7 +75,7 @@ export default function Login() {
 
   
   const handleCredentialResponse = async (response) => {
-    const res = await fetch("http://localhost:5000/auth/google", {
+    const res = await fetch("{API}/auth/google", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: response.credential }),
@@ -91,7 +94,7 @@ export default function Login() {
   // Step 1: Send OTP
   const handleSendOtp = async () => {
     try {
-      const res = await fetch("http://localhost:5000/login/send-otp", {
+      const res = await fetch("{API}/login/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -112,7 +115,7 @@ export default function Login() {
   // Step 2: Verify OTP
   const handleVerifyOtp = async () => {
     try {
-      const res = await fetch("http://localhost:5000/login/verify-otp", {
+      const res = await fetch("{API}/login/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
