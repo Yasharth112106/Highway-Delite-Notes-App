@@ -14,9 +14,30 @@ mongoose.connect("mongodb://127.0.0.1:27017/notesapp")
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
 
+// JWT Secret
+const JWT_SECRET = "mysecretkey";
 
 
+// Signup (email + password, OTP logic will be added later)
+app.post("/signup", async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
+    if (!email || !password)
+      return res.status(400).json({ message: "All fields required" });
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ message: "User exists" });
+
+
+    const user = new User({ email, password: hashedPassword });
+    await user.save();
+
+    res.json({ message: "Signup successful" });
+  } catch (err) {
+    res.status(500).json({ message: "Error in signup" });
+  }
+});
 
 
 app.listen(5000, () => console.log("Server running on http://localhost:5000"));

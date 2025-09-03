@@ -9,7 +9,14 @@ function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-   
+    e.preventDefault();
+    if (!email || !password) return setError("All fields required");
+
+    const res = await login(email, password);
+    if (res.error) return setError(res.error);
+
+    localStorage.setItem("token", res.token);
+    navigate("/notes");
   };
 
   return (

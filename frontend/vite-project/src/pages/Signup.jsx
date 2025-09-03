@@ -9,7 +9,13 @@ function Signup() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    
+    e.preventDefault();
+    if (!email || !password) return setError("All fields required");
+
+    const res = await signup(email, password);
+    if (res.error) return setError(res.error);
+
+    navigate("/login");
   };
 
   return (
