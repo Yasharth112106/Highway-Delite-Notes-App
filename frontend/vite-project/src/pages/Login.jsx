@@ -75,7 +75,7 @@ export default function Login() {
 
   
   const handleCredentialResponse = async (response) => {
-    const res = await fetch("{API}/auth/google", {
+    const res = await fetch("${API}/auth/google", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: response.credential }),
@@ -94,7 +94,7 @@ export default function Login() {
   // Step 1: Send OTP
   const handleSendOtp = async () => {
     try {
-      const res = await fetch("{API}/login/send-otp", {
+      const res = await fetch("${API}/login/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -115,7 +115,7 @@ export default function Login() {
   // Step 2: Verify OTP
   const handleVerifyOtp = async () => {
     try {
-      const res = await fetch("{API}/login/verify-otp", {
+      const res = await fetch("${API}/login/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
