@@ -17,6 +17,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/notesapp")
 // JWT Secret
 const JWT_SECRET = "mysecretkey";
 
+//  AUTH ROUTES (Signup, Login)
 
 // Signup (email + password, OTP logic can be added later)
 app.post("/signup", async (req, res) => {
@@ -59,5 +60,41 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// NOTES ROUTES 
+
+// Create Note
+app.post("/notes",  async (req, res) => {
+  try {
+    const { content } = req.body;
+    if (!content) return res.status(400).json({ message: "Note text required" });
+
+    const note = new Note({ text:content, userId: req.user.userId });
+    await note.save();
+
+    res.json(note);
+  } catch (err) {
+    res.status(500).json({ message: "Error creating note" });
+  }
+});
+
+// Get Notes
+app.get("/notes", async (req, res) => {
+  try {
+    const notes = await Note.find({ userId: req.user.userId });
+    res.json(notes);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching notes" });
+  }
+});
+
+// Delete Note
+app.delete("/notes/:id", async (req, res) => {
+  try {
+    await Note.findOneAndDelete({ _id: req.params.id, userId: req.user.userId });
+    res.json({ message: "Note deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Error deleting note" });
+  }
+});
 
 app.listen(5000, () => console.log("Server running on http://localhost:5000"));
