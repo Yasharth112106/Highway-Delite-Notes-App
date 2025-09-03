@@ -105,19 +105,27 @@ app.post("/login/send-otp", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     otpStore[email] = { otp, expires: Date.now() + 5 * 60 * 1000 };
 
-    await transporter.sendMail({
-      from: "yasharth112106@gmail.com",
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
       to: email,
       subject: "Your OTP for Login",
       text: `Your OTP is ${otp}. It expires in 5 minutes.`,
-    });
+    };
+
+    await transporter.sendMail(mailOptions);
 
     res.json({ success: true, message: "OTP sent to email" });
   } catch (err) {
-    console.error("Login OTP Error:", err.message);
-    res.status(500).json({ success: false, message: "Failed to send OTP" });
+    console.error("Login OTP Error:", err);   // log full error, not just message
+    res.status(500).json({
+      success: false,
+      message: "Failed to send OTP",
+      error: err.message,                     // send back reason for debugging
+    });
   }
 });
+
+
 
 app.post("/login/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
