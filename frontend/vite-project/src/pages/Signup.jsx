@@ -48,6 +48,8 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function Signup() {
   const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [dob, setDob] = useState("");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
@@ -55,10 +57,10 @@ export default function Signup() {
   // Step 1: Send OTP
   const handleSendOtp = async () => {
     try {
-      const res = await fetch("http://localhost:5000/auth/send-otp", {
+      const res = await fetch("http://localhost:5000/signup/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ name, dob, email }), // ✅ send all fields
       });
       const data = await res.json();
       if (data.success) {
@@ -76,12 +78,13 @@ export default function Signup() {
   // Step 2: Verify OTP and Signup
   const handleVerifyOtp = async () => {
     try {
-      const res = await fetch("http://localhost:5000/auth/signup", {
+      const res = await fetch("http://localhost:5000/signup/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
       });
       const data = await res.json();
+
       if (data.success) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -96,11 +99,23 @@ export default function Signup() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <h2>Signup</h2>
 
       {!otpSent ? (
         <>
+          <input
+            type="text"
+            placeholder="Enter Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            type="date"
+            placeholder="Enter DOB"
+            value={dob}
+            onChange={(e) => setDob(e.target.value)}
+          />
           <input
             type="email"
             placeholder="Enter Email"
@@ -113,7 +128,7 @@ export default function Signup() {
         <>
           <input
             type="text"
-            placeholder="Enter OTP"
+            placeholder="OTP"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
           />

@@ -6,7 +6,8 @@ const cors = require("cors");
 const { User, Note } = require("./models");
 const authMiddleware = require("./authMiddleware");
 const nodemailer = require("nodemailer")
-
+const dotenv = require("dotenv");
+dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -16,8 +17,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/notesapp")
 .then(() => console.log("MongoDB Connected"))
 .catch(err => console.log(err));
 
-// JWT Secret
-const JWT_SECRET = "mysecretkey";
+
 
 
 //  In-memory OTP store
@@ -27,31 +27,36 @@ const otpStore ={};
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "yasharth112106@gmail.com",   
-    pass: "opencv",      
+     user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,      
   },
 });
 
 //  OTP Signup
 app.post("/signup/send-otp", async (req, res) => {
-  const { name, dob, email } = req.body;
+  try {
+    const { name, dob, email } = req.body;
+    if (!name || !dob || !email) {
+      return res.status(400).json({ success: false, message: "All fields required" });
+    }
 
-  if (!name || !dob || !email) {
-    return res.status(400).json({ message: "All fields required" });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    otpStore[email] = { otp, name, dob, expires: Date.now() + 5 * 60 * 1000 };
+
+    await transporter.sendMail({
+      from: "yasharth112106@gmail.com",
+      to: email,
+      subject: "Your OTP for Signup",
+      text: `Your OTP is ${otp}. It expires in 5 minutes.`,
+    });
+
+    res.json({ success: true, message: "OTP sent to email" });
+  } catch (err) {
+    console.error("Signup OTP Error:", err.message);
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
   }
-
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  otpStore[email] = { otp, name, dob, expires: Date.now() + 5 * 60 * 1000 };
-
-  await transporter.sendMail({
-    from: "yasharth112106@gmail.com",
-    to: email,
-    subject: "Your OTP for Signup",
-    text: `Your OTP is ${otp}. It expires in 5 minutes.`,
-  });
-
-  res.json({ message: "OTP sent to email" });
 });
+
 
 app.post("/signup/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
@@ -73,28 +78,34 @@ app.post("/signup/verify-otp", async (req, res) => {
 
   delete otpStore[email];
 
-  const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET);
-  res.json({ token, user });
+  const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET);
+  res.json({ success: true, token, user });
 });
 
 //  OTP Login
 app.post("/login/send-otp", async (req, res) => {
-  const { email } = req.body;
-  const user = await User.findOne({ email });
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
-  if (!user) return res.status(404).json({ message: "User not found" });
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    otpStore[email] = { otp, expires: Date.now() + 5 * 60 * 1000 };
 
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
-  otpStore[email] = { otp, expires: Date.now() + 5 * 60 * 1000 };
+    await transporter.sendMail({
+      from: "yasharth112106@gmail.com",
+      to: email,
+      subject: "Your OTP for Login",
+      text: `Your OTP is ${otp}. It expires in 5 minutes.`,
+    });
 
-  await transporter.sendMail({
-    from: "yasharth112106@gmail.com",
-    to: email,
-    subject: "Your OTP for Login",
-    text: `Your OTP is ${otp}. It expires in 5 minutes.`,
-  });
-
-  res.json({ message: "OTP sent to email" });
+    res.json({ success: true, message: "OTP sent to email" });
+  } catch (err) {
+    console.error("Login OTP Error:", err.message);
+    res.status(500).json({ success: false, message: "Failed to send OTP" });
+  }
 });
 
 app.post("/login/verify-otp", async (req, res) => {
@@ -108,8 +119,8 @@ app.post("/login/verify-otp", async (req, res) => {
   const user = await User.findOne({ email });
   delete otpStore[email];
 
-  const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET);
-  res.json({ token, user });
+  const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET);
+  res.json({ success: true, token, user });
 });
 
 //  AUTH ROUTES (password based,initially)

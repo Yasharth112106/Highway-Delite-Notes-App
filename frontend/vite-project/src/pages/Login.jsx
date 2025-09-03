@@ -58,7 +58,7 @@ export default function Login() {
   // Step 1: Send OTP
   const handleSendOtp = async () => {
     try {
-      const res = await fetch("http://localhost:5000/auth/send-otp", {
+      const res = await fetch("http://localhost:5000/login/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -79,7 +79,7 @@ export default function Login() {
   // Step 2: Verify OTP
   const handleVerifyOtp = async () => {
     try {
-      const res = await fetch("http://localhost:5000/auth/login", {
+      const res = await fetch("http://localhost:5000/login/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp }),
@@ -99,7 +99,7 @@ export default function Login() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div >
       <h2>Login</h2>
 
       {!otpSent ? (
