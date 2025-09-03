@@ -43,7 +43,7 @@
 
 // export default Signup;
 
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Signup() {
@@ -53,6 +53,36 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+
+  useEffect(() => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id: import.meta.env.GOOGLE_CLIENT_ID,  // 🔹 replace with real client ID
+      callback: handleCredentialResponse,
+    });
+
+    google.accounts.id.renderButton(
+      document.getElementById("googleSignupDiv"),
+      { theme: "outline", size: "large" }
+    );
+  }, []);
+
+  const handleCredentialResponse = async (response) => {
+    const res = await fetch("http://localhost:5000/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: response.credential }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/dashboard");
+    } else {
+      alert("Google login failed");
+    }
+  };
 
   // Step 1: Send OTP
   const handleSendOtp = async () => {
@@ -98,6 +128,8 @@ export default function Signup() {
     }
   };
 
+  
+
   return (
     <div>
       <h2>Signup</h2>
@@ -139,7 +171,9 @@ export default function Signup() {
       <p>
         Already have an account? <Link to="/login">Login</Link>
       </p>
-      <button>Signup with Google</button>
+      {/* <button>Signup with Google</button> */}
+      <div id="googleSignupDiv"></div>
+
     </div>
   );
 }

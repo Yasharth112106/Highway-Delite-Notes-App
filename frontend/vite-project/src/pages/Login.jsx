@@ -46,14 +46,47 @@
 
 //changign to passwordLess login wiht OTP acc to the figma design
 //2nd draft
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { useNavigate, Link } from "react-router-dom";
+// import {dotenv} from "dotenv";
+// dotenv.config();
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+
+  useEffect(() => {
+    /* global google */
+   google.accounts.id.initialize({
+  client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+  callback: handleCredentialResponse,
+});
+
+    google.accounts.id.renderButton(
+      document.getElementById("googleLoginDiv"),
+      { theme: "outline", size: "large" }
+    );
+  }, []);
+
+  
+  const handleCredentialResponse = async (response) => {
+    const res = await fetch("http://localhost:5000/auth/google", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: response.credential }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/dashboard");
+    } else {
+      alert("Google login failed");
+    }
+  };
 
   // Step 1: Send OTP
   const handleSendOtp = async () => {
@@ -98,6 +131,9 @@ export default function Login() {
     }
   };
 
+  
+
+
   return (
     <div >
       <h2>Login</h2>
@@ -127,7 +163,8 @@ export default function Login() {
       <p>
         Don’t have an account? <Link to="/signup">Create Account</Link>
       </p>
-      <button>Login with Google</button>
+      {/* <button>Login with Google</button> */}
+      <div id="googleLoginDiv"></div>
     </div>
   );
 }

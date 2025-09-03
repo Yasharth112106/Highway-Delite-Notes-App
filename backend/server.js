@@ -8,6 +8,12 @@ const authMiddleware = require("./authMiddleware");
 const nodemailer = require("nodemailer")
 const dotenv = require("dotenv");
 dotenv.config();
+
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -165,6 +171,42 @@ app.post("/login/verify-otp", async (req, res) => {
 //     res.status(500).json({ message: "Error in login"});
 //   }
 // });
+
+
+// Google Login/Signup
+app.post("/auth/google", async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    // Verify token with Google
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+    if (!user) {
+      // If new user, create it (similar to signup)
+      user = new User({ name, email, dob: null }); 
+      await user.save();
+    }
+
+    // Issue JWT token
+    const jwtToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET
+    );
+
+    res.json({ success: true, token: jwtToken, user });
+  } catch (err) {
+    console.error("Google Login Error:", err.message);
+    res.status(500).json({ success: false, message: "Google login failed" });
+  }
+});
 
 // NOTES ROUTES 
 
