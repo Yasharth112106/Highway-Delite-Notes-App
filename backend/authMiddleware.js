@@ -9,7 +9,7 @@ function authMiddleware(req, res, next) {
 
   try {
     const decodedPayload = jwt.verify(token.split(" ")[1], JWT_SECRET);
-    console.log("✅ Token decoded successfully:", decoded);
+    console.log(" Token decoded successfully:", decodedPayload);
     req.user = decodedPayload; // { userId: ... }
     next();
   } catch (err) {

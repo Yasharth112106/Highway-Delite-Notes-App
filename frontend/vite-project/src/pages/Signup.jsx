@@ -131,49 +131,87 @@ export default function Signup() {
   
 
   return (
-    <div>
-      <h2>Signup</h2>
+  <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="bg-white p-6 rounded-lg shadow-md w-96">
+      {/* Logo + Title */}
+      <div className="flex items-center justify-center mb-4">
+        {/* <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mr-2"></div> */}
+        <span className="text-lg font-bold">HD</span>
+      </div>
+
+      <h2 className="text-2xl font-semibold text-center mb-1">Sign up</h2>
+      <p className="text-gray-500 text-center mb-6 text-sm">
+        Sign up to enjoy the feature of HD
+      </p>
 
       {!otpSent ? (
         <>
+          <label className="block text-sm text-gray-600 mb-1">Your Name</label>
           <input
             type="text"
             placeholder="Enter Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className="w-full border px-3 py-2 mb-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+
+          <label className="block text-sm text-gray-600 mb-1">
+            Date of Birth
+          </label>
           <input
             type="date"
-            placeholder="Enter DOB"
             value={dob}
             onChange={(e) => setDob(e.target.value)}
+            className="w-full border px-3 py-2 mb-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+
+          <label className="block text-sm text-gray-600 mb-1">Email</label>
           <input
             type="email"
             placeholder="Enter Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            className="w-full border px-3 py-2 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
-          <button onClick={handleSendOtp}>Send OTP</button>
+
+          <button
+            onClick={handleSendOtp}
+            className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+          >
+            Get OTP
+          </button>
         </>
       ) : (
         <>
+          <label className="block text-sm text-gray-600 mb-1">OTP</label>
           <input
             type="text"
-            placeholder="OTP"
+            placeholder="Enter OTP"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
+            className="w-full border px-3 py-2 mb-4 rounded focus:outline-none focus:ring-2 focus:ring-green-400"
           />
-          <button onClick={handleVerifyOtp}>Verify OTP & Signup</button>
+
+          <button
+            onClick={handleVerifyOtp}
+            className="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+          >
+            Verify OTP & Signup
+          </button>
         </>
       )}
 
-      <p>
-        Already have an account? <Link to="/login">Login</Link>
+      {/* Divider */}
+      <p className="text-sm text-center mt-4 text-gray-600">
+        Already have an account?{" "}
+        <Link to="/login" className="text-blue-500 hover:underline">
+          Sign in
+        </Link>
       </p>
-      {/* <button>Signup with Google</button> */}
-      <div id="googleSignupDiv"></div>
 
+      <div className="flex justify-center mt-4" id="googleSignupDiv"></div>
     </div>
-  );
+  </div>
+);
+
 }

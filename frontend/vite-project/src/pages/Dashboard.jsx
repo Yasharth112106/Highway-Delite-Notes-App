@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-
+import Notes from "./Notes";
 export default function Dashboard() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
@@ -17,11 +17,26 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Dashboard</h2>
-      <p>Welcome, {user.name}</p>
-      <p>Email: {user.email}</p>
-      <button onClick={handleLogout}>Logout</button>
+    <div className="p-6 max-w-md mx-auto">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold">Dashboard</h2>
+        <button
+          onClick={handleLogout}
+          className="flex items-center font-bold gap-1 text-blue-500 hover:text-blue-700"
+        >
+           Sign Out
+        </button>
+      </div>
+
+      {/* User Card */}
+      <div className="bg-white p-4 rounded-lg shadow mb-4 text-xl">
+        <h3 className="font-semibold">Welcome, {user?.name}!</h3>
+        <p className="text-gray-500 text-sm">Email: {user?.email}</p>
+      </div>
+
+      {/* Notes Section */}
+      <Notes token={token} />
     </div>
   );
 }

@@ -135,36 +135,74 @@ export default function Login() {
 
 
   return (
-    <div >
-      <h2>Login</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white shadow-md rounded-xl p-6 w-80">
+        {/* Logo + Title */}
+        <div className="text-center mb-5">
+          <div className="flex justify-center mb-2">
+            <span className="text-3xl">HD</span>
+          </div>
+          <h2 className="text-xl font-bold">Sign In</h2>
+          <p className="text-sm text-gray-500">
+            Please login to continue to your account.
+          </p>
+        </div>
 
-      {!otpSent ? (
-        <>
-          <input
-            type="email"
-            placeholder="Enter Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button onClick={handleSendOtp}>Send OTP</button>
-        </>
-      ) : (
-        <>
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
-          <button onClick={handleVerifyOtp}>Verify OTP</button>
-        </>
-      )}
+        {/* Form */}
+        {!otpSent ? (
+          <>
+            <label className="text-sm font-medium text-gray-600">Email</label>
+            <input
+              type="email"
+              placeholder="Enter Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2 mt-1 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <button
+              onClick={handleSendOtp}
+              className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            >
+              Send OTP
+            </button>
+          </>
+        ) : (
+          <>
+            <label className="text-sm font-medium text-gray-600">OTP</label>
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-full border rounded-lg px-3 py-2 mt-1 mb-3 focus:outline-none focus:ring-2 focus:ring-green-400"
+            />
+            <button
+              onClick={handleVerifyOtp}
+              className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition"
+            >
+              Verify OTP
+            </button>
+            <p className="text-xs text-blue-500 mt-2 cursor-pointer hover:underline">
+              Resend OTP
+            </p>
+          </>
+        )}
 
-      <p>
-        Don’t have an account? <Link to="/signup">Create Account</Link>
-      </p>
-      {/* <button>Login with Google</button> */}
-      <div id="googleLoginDiv"></div>
+        {/* Divider */}
+        <div className="my-4 text-center text-sm text-gray-400">or</div>
+
+        {/* Google Button */}
+        <div id="googleLoginDiv" className="flex justify-center"></div>
+
+        {/* Bottom Link */}
+        <p className="text-sm text-center mt-4">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="text-blue-500 hover:underline">
+            Create one
+          </Link>
+        </p>
+      </div>
     </div>
   );
-}
+};
+
